@@ -3,9 +3,12 @@
 return [
    'host' => '127.0.0.1',
    'port' => '3306',
-   'base' => 'todolist_cours',
+   'base' => 'gestion_taches',
    'utilisateur' => 'root',
    'mot_de_passe' => '',
 ];
 
-
+$requete = $pdo->query(
+   'SELECT id, titre, priorite, terminee FROM taches'
+);
+$taches = $requete->fetchAll();
