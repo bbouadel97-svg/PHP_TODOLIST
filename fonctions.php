@@ -5,7 +5,7 @@ function compterTachesRestantes(array $taches): int
 {
     $nombre = 0;
     foreach ($taches as $tache) {
-        if ($tache['terminee'] === false) {
+        if (empty($tache['terminee'])) {
             $nombre++;
         }
     }
