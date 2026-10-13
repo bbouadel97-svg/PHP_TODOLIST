@@ -16,6 +16,8 @@ include __DIR__ . '/includes/entete.php';
     <div><strong><?= $restantes ?></strong><span>À faire</span></div>
     <div><strong><?= $terminees ?></strong><span>Terminées</span></div>
 </section>
+<!-- inclusion du formulaire d'ajout de tâche -->
+<?php include __DIR__ . '/formulaire.php'; ?>
 
 <section class="liste" aria-labelledby="titre-liste">
     <h2 id="titre-liste">Mes tâches</h2>
@@ -31,12 +33,14 @@ include __DIR__ . '/includes/entete.php';
                     </div>
                     <span class="etat"><?= $tache['terminee'] ? 'Terminée' : 'À faire' ?></span>
                 </li>
-            <?php endforeach; ?>
+            
+            <?php endforeach; ?> 
         </ul>
         <?php if ($restantes === 0): ?>
             <p class="message">Bravo, toutes les tâches sont terminées !</p>
         <?php endif; ?>
     <?php endif; ?>
 </section>
+
 
 <?php include __DIR__ . '/includes/pied.php'; ?>

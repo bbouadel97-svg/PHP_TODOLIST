@@ -1,3 +1,4 @@
+
 <?php
 $config = require __DIR__ . '/config.php';
 $dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port']
