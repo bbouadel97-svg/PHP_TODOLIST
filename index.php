@@ -7,6 +7,21 @@ $titrePage = 'Ma liste de tâches';
 $total = count($taches);
 $restantes = compterTachesRestantes($taches);
 $terminees = $total - $restantes;
+    
+$filtre = $_GET['filtre'] ?? 'toutes'; // Filtre par défaut 
+if(!in_array($filtre, ['toutes', 'restantes', 'terminees'])) { // Si le filtre n'est pas valide, on remet le filtre par défaut
+    $filtre = 'toutes'; // On remet le filtre par défaut
+}
+$tachesAffichees = []; // Tableau des tâches à afficher après application du filtre
+foreach ($taches as $tache) // On parcourt toutes les tâches
+{
+    if ($filtre === 'toutes' ||
+        ($filtre === 'restantes' && !$tache['terminee']) ||
+        ($filtre === 'terminees' && $tache['terminee'])) {
+        $tachesAffichees[] = $tache;
+    }
+}
+
 
 include __DIR__ . '/includes/entete.php';
 ?>
@@ -21,11 +36,16 @@ include __DIR__ . '/includes/entete.php';
 
 <section class="liste" aria-labelledby="titre-liste">
     <h2 id="titre-liste">Mes tâches</h2>
-    <?php if (empty($taches)): ?>
+    <nav class="filtres">
+        <a href="index.php?filtre=toutes" class="<?= $filtre === 'toutes' ? 'active' : '' ?>">Toutes</a>
+        <a href="index.php?filtre=restantes" class="<?= $filtre === 'restantes' ? 'active' : '' ?>">À faire</a>
+        <a href="index.php?filtre=terminees" class="<?= $filtre === 'terminees' ? 'active' : '' ?>">Terminées</a>
+    </nav>
+    <?php if (empty($tachesAffichees)): ?>
         <p class="message">Aucune tâche pour le moment.</p>
     <?php else: ?>
         <ul>
-            <?php foreach ($taches as $tache): ?>
+            <?php foreach ($tachesAffichees as $tache): ?>
                 <li class="tache <?= $tache['terminee'] ? 'terminee' : '' ?>">
                     <div>
                         <h3><?= echapper($tache['titre']) ?></h3>
