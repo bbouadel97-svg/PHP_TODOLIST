@@ -1,4 +1,5 @@
 <?php
+session_start(); // démarre la session pour gérer les messages flash ou autres données de session
 // __DIR__ désigne le dossier de ce fichier, quel que soit le dossier de lancement.
 require __DIR__ . '/donnees.php';
 require __DIR__ . '/fonctions.php';
@@ -12,19 +13,29 @@ $filtre = $_GET['filtre'] ?? 'toutes'; // Filtre par défaut
 if(!in_array($filtre, ['toutes', 'restantes', 'terminees'])) { // Si le filtre n'est pas valide, on remet le filtre par défaut
     $filtre = 'toutes'; // On remet le filtre par défaut
 }
-$tachesAffichees = []; // Tableau des tâches à afficher après application du filtre
-foreach ($taches as $tache) // On parcourt toutes les tâches
-{
-    if ($filtre === 'toutes' ||
-        ($filtre === 'restantes' && !$tache['terminee']) ||
-        ($filtre === 'terminees' && $tache['terminee'])) {
-        $tachesAffichees[] = $tache;
-    }
+// Requête SQL adaptée au filtre (la valeur est transmise via une requête préparée)
+$sql = 'SELECT id_tache AS id, nom_tache AS titre, LOWER(priorite_tache) AS priorite, etat_tache AS terminee FROM taches';
+$parametres = [];
+if ($filtre !== 'toutes') {
+    $sql .= ' WHERE etat_tache = :etat';
+    $parametres['etat'] = $filtre === 'terminees' ? 1 : 0;
 }
-
-
+$stmtFiltre = $pdo->prepare($sql); // prépare la requête SQL avec les paramètres éventuels
+$stmtFiltre->execute($parametres); // exécute la requête SQL avec les sous-paramètres fournis
+$tachesAffichees = $stmtFiltre->fetchAll(); // récupère toutes les tâches correspondant au filtre
+ 
+$messageFlash = $_SESSION['message'] ?? '';
+unset($_SESSION['message']); // supprime le message flash après l'avoir récupéré
+$theme = ($_COOKIE['theme'] ?? '') === 'sombre' ? 'sombre' : 'clair'; // Détermine le thème actuel, par défaut 'clair' sans cookie défini
 include __DIR__ . '/includes/entete.php';
 ?>
+<form action="theme.php" method="post"> 
+    <button type="submit" name="theme" value="clair">Clair</button> 
+    <button type="submit" name="theme" value="sombre">Sombre</button>
+</form>
+<?php if ($messageFlash): // Affiche le message flash s'il existe ?>
+    <p class="message"><?= echapper($messageFlash) ?></p>
+<?php endif; ?>
 
 <section class="statistiques" aria-label="Résumé des tâches">
     <div><strong><?= $total ?></strong><span>Au total</span></div>

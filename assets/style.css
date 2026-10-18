@@ -24,4 +24,5 @@ code { background: #e4e9f2; padding: 2px 5px; border-radius: 4px; }
 .filtres a.active { font-weight: bold; text-decoration: underline; }
 .filtres a { margin-right: 12px; color: #4650b3; text-decoration: none; }
 .filtres a:hover { text-decoration: underline; }
+body.sombre { background: #222; color: #eee; }
 @media (max-width: 480px) { .conteneur { padding: 28px 16px; } .statistiques div { padding: 12px; } .tache { align-items: flex-start; } }
